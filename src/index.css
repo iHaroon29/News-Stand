@@ -1,0 +1,28 @@
+:root {
+  --primary: #282828;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-size: 18px;
+  font-family: sans-serif;
+  color: var(--primary);
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  color: inherit;
+  border: none;
+}
+
+a {
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
