@@ -26,3 +26,32 @@ a {
   text-decoration: none;
   color: inherit;
 }
+
+/* Element | http://localhost:3000/ */
+
+.feed-scroll {
+  max-height: 90vh;
+  overflow-y: scroll;
+  background: grey;
+  padding: 10px;
+}
+
+/* Element | http://localhost:3000/ */
+
+.feed-left {
+  width: 50%;
+  border: 1px solid black;
+}
+
+/* Inline #1 | http://localhost:3000/ */
+
+.feed {
+  background: white;
+  padding: 5px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.feed-description-holder > p {
+  font-style: italic;
+}

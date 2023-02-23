@@ -1,8 +1,7 @@
 import React from 'react'
-import Form from './Components/Form'
-
+import FeedWrapper from './Components/FeedWrapper'
 const App = () => {
-  return <Form login={true} />
+  return <FeedWrapper />
 }
 
 export default App
