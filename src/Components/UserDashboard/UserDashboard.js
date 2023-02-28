@@ -16,7 +16,7 @@ const DashboardWrapper = styled.div`
     "header header header header header"
     ". . sidebar sidebar sidebar"
     ". . sidebar sidebar sidebar"
-    ". . sidebar sidebar sidebar"
+    "btn btn sidebar sidebar sidebar"
 }
 `
 

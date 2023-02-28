@@ -1,37 +1,44 @@
 import React, { useState } from 'react'
-import { Button } from './Components'
+import { Button, Loading } from './Components'
 import AuthContext from './context'
 import { useNavigate } from 'react-router-dom'
+import { decodeJWT } from './utils/jwt'
 const Onborading = (props) => {
-  const { visible } = props
-
+  const { visible, loading } = props
   const [formState, setFormState] = useState(false)
   const updateFormState = (e) => {
     if (e.target.value === 'signup') setFormState(false)
     else setFormState(true)
   }
-  return (
-    <div
-      className={
-        visible ? 'visible onboarding-wrapper' : 'no-visible onboarding-wrapper'
-      }
-    >
-      <div className={formState ? 'move right' : 'move left'}></div>
-      <div className='onboarding-left'>
-        {!formState ? (
-          <Form login={false} />
-        ) : (
-          <Content login={false} update={updateFormState} />
-        )}
+
+  return !loading.loading ? (
+    <>
+      <div
+        className={
+          visible
+            ? 'visible onboarding-wrapper'
+            : 'no-visible onboarding-wrapper'
+        }
+      >
+        <div className={formState ? 'move right' : 'move left'}></div>
+        <div className='onboarding-left'>
+          {!formState ? (
+            <Form login={false} setLoading={loading.setLoading} />
+          ) : (
+            <Content login={false} update={updateFormState} />
+          )}
+        </div>
+        <div className='onboarding-right'>
+          {formState ? (
+            <Form login={true} setLoading={loading.setLoading} />
+          ) : (
+            <Content login={true} update={updateFormState} />
+          )}
+        </div>
       </div>
-      <div className='onboarding-right'>
-        {formState ? (
-          <Form login={true} />
-        ) : (
-          <Content login={true} update={updateFormState} />
-        )}
-      </div>
-    </div>
+    </>
+  ) : (
+    <Loading />
   )
 }
 
@@ -59,6 +66,7 @@ const Content = (props) => {
 }
 
 const Form = (props) => {
+  const { setLoading } = props
   const navigate = useNavigate()
   const url = `http://localhost:8000/api/v1/auth/${
     props.login ? 'login' : 'signup'
@@ -72,6 +80,7 @@ const Form = (props) => {
     method: 'POST',
   }
   const formHandler = (e, authState, setAuthState) => {
+    setLoading((prev) => !prev)
     e.preventDefault()
     fetch(url, options)
       .then((resp) => resp.json())
@@ -80,7 +89,9 @@ const Form = (props) => {
           ...authState,
           auth: data.authorization,
           token: data.accessToken,
+          userId: decodeJWT(data.accessToken).data,
         })
+        setLoading((prev) => !prev)
         navigate('/feed')
       })
       .catch((e) => console.log(e.message))
