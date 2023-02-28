@@ -10,12 +10,16 @@ const ToggleWrapper = styled.div`
   position: absolute;
   bottom: 100px;
   left: 100px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 `
 
 const FooterToggle = (props) => {
+  const {isActive} = props
   return (
     <ToggleWrapper>
-      {props.isActive ? <FaQuestion /> : <GrClose />}
+      {props.isActive ? <GrClose /> : <FaQuestion />}
     </ToggleWrapper>
   )
 }
