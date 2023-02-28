@@ -3,15 +3,15 @@ import { Button, Loading } from './Components'
 import AuthContext from './context'
 import { useNavigate } from 'react-router-dom'
 import { decodeJWT } from './utils/jwt'
-const Onborading = (props) => {
-  const { visible, loading } = props
+const Onborading = ({ visible }) => {
+  const [loading, setLoading] = useState(false)
   const [formState, setFormState] = useState(false)
   const updateFormState = (e) => {
     if (e.target.value === 'signup') setFormState(false)
     else setFormState(true)
   }
 
-  return !loading.loading ? (
+  return !loading ? (
     <>
       <div
         className={
@@ -23,14 +23,14 @@ const Onborading = (props) => {
         <div className={formState ? 'move right' : 'move left'}></div>
         <div className='onboarding-left'>
           {!formState ? (
-            <Form login={false} setLoading={loading.setLoading} />
+            <Form login={false} setLoading={setLoading} />
           ) : (
             <Content login={false} update={updateFormState} />
           )}
         </div>
         <div className='onboarding-right'>
           {formState ? (
-            <Form login={true} setLoading={loading.setLoading} />
+            <Form login={true} setLoading={setLoading} />
           ) : (
             <Content login={true} update={updateFormState} />
           )}

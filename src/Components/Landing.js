@@ -7,7 +7,7 @@ import FooterToggle from './FooterToggle'
 
 const Landing = () => {
   const [visible, setVisible] = useState(false)
-  const [loading, setLoading] = useState(false)
+
   const [overlay, setOverlay] = useState(false)
   const [animate, setAnimate] = useState(false)
   const updateFormState = () => {
@@ -34,7 +34,7 @@ const Landing = () => {
         />
       ) : null}
       <div className='landing-image-holder'></div>
-      <Onborading visible={visible} loading={{ loading, setLoading }} />
+      <Onborading visible={visible} />
       <Notif />
       <FooterToggle isActive={false} />
     </div>
