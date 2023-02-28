@@ -21,7 +21,6 @@ const Feed = (props) => {
               {node.meta.wordCount > 10
                 ? node.description.slice(0, 80) + '...'
                 : node.description}
-              <a href='#'> Read More</a>
             </p>
           </div>
         </div>

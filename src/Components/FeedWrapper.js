@@ -1,43 +1,59 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import Feed from './Feed'
-const ws = new WebSocket('ws://localhost:8000/ws/feed')
+import Publish from './Publish'
+import Tags from './Tags'
+import { useNavigate } from 'react-router-dom'
 const FeedWrapper = () => {
   const [updates, setUpdates] = useState([])
-  const fetchFeed = (e) => {
-    e.preventDefault()
-    ws.send(JSON.stringify({ requestType: 'updates' }))
+  const wsConnection = useRef(null)
+  const navigate = useNavigate()
+  const test = () => {
+    navigate('/profile')
   }
   useEffect(() => {
-    ws.onmessage = (response) => {
-      const { responseType, data } = JSON.parse(response.data)
+    const socket = new WebSocket(
+      'ws://localhost:8000/ws/feed?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiNjNmZDhkMTBhYjI0Y2Y3Yzc3ODAyZDY4IiwiaWF0IjoxNjc3NTgwNTM2LCJleHAiOjE2Nzc2ODg1MzZ9.NmRv6Kev6iZNOrvu_hJjHZPgKRxiFMsND6tsTe1_maI'
+    )
+    socket.onopen = () => {
+      console.log('socket is open')
+    }
+    socket.onmessage = (response) => {
+      const { responseType, messageData } = JSON.parse(response.data)
       if (responseType === 'ack') {
-        return console.log(data)
+        return console.log(messageData)
       }
       if (responseType === 'notification') {
-        return setUpdates(JSON.parse(data))
+        return setUpdates((prev) => [...prev, messageData])
+      }
+      if (responseType === 'disconnect') {
+        console.log(messageData)
       }
     }
-    ws.onerror = (e) => {
+    socket.onerror = (e) => {
       console.log(e.message)
     }
-    ws.onclose = () => {
+    socket.onclose = () => {
       console.log('Connection Closed')
     }
+    wsConnection.current = socket
     return () => {
-      ws.close()
+      socket.close()
     }
   }, [])
   return (
     <div className='feed-wrapper'>
-      <button className='test' onClick={fetchFeed}>
-        Fetch
-      </button>
+      <div className='feed-top'>
+        <Tags />
+      </div>
       <div className='feed-left'>
         <div className='feed-scroll'>
           <Feed test='test' updates={updates} />
         </div>
       </div>
-      <div className='feed-right'></div>
+      <div className='feed-right'>
+        <Publish ref={wsConnection} />
+      </div>
+      <button onClick={test}>test</button>
     </div>
   )
 }
