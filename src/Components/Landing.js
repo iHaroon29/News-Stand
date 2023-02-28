@@ -3,15 +3,24 @@ import { Notif } from './Notif'
 import Hamber from './Hamber'
 import Onborading from './Onborading'
 import FooterToggle from './FooterToggle'
+import About from './about'
 
 const Landing = () => {
   const [visible, setVisible] = useState(false)
   const [overlay, setOverlay] = useState(false)
   const [animate, setAnimate] = useState(false)
+  const [aboutOverlay, setAboutOverlay] = useState(false)
+  const [aboutVisible, setAboutVisible] = useState(false)
+  const [isActive, setIsActive] = useState(false)
   const updateFormState = () => {
     setOverlay((prev) => !prev)
     setVisible((prev) => !prev)
     setAnimate((prev) => !prev)
+  }
+  const updateAboutState = () =>{
+    setAboutOverlay((prev) => !prev)
+    setAboutVisible((prev) => !prev)
+    setIsActive((prev) => !prev)
   }
 
   return (
@@ -26,7 +35,14 @@ const Landing = () => {
       <div className='landing-image-holder'></div>
       <Onborading visible={visible} />
       <Notif />
-      <FooterToggle isActive={false} />
+      <div
+        className={!animate}
+        onClick={updateAboutState}
+      >
+        <FooterToggle isActive={isActive} />
+      </div>
+      {aboutOverlay ? <div className='about-overlay'></div> : null}
+      <About visible={aboutVisible}/>
     </div>
   )
 }

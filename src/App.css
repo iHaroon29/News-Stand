@@ -60,6 +60,10 @@
   background-repeat: no-repeat;
   background-size: contain;
 }
+.about-img{
+  background-image: url('./Assets/3125988.jpg');
+  width: 100%;
+}
 
 .landing-image-holder::after {
   background-color: grey;
