@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useContext } from 'react'
+import React from 'react'
 import styled from 'styled-components'
-import AuthContext from '../../context'
+
 const UserActivityWrapper = styled.div`
   grid-area: sidebar;
   overflowy: scroll;
@@ -20,27 +20,12 @@ const UserActivityWrapper = styled.div`
     }
   }
 `
-const UserActivity = () => {
-  const [userActivity, setUserActivity] = useState([])
-  const authContext = useContext(AuthContext)
-  useEffect(() => {
-    const headers = new Headers()
-    headers.append('Content-type', 'application/json')
-    headers.append('authorization', authContext.token)
-    const options = { headers, method: 'GET' }
-    fetch(
-      `http://localhost:8000/api/v1/users/63fd8d10ab24cf7c77802d6a/posts`,
-      options
-    )
-      .then((resp) => resp.json())
-      .then((data) => setUserActivity((prev) => [...data.posts]))
-      .catch((e) => console.log(e.message))
-  }, [authContext.token])
+const UserActivity = (props) => {
   return (
     <UserActivityWrapper>
       <div className='activity-holder'>
         <h2>My Activity</h2>
-        {userActivity.map((node) => {
+        {props.posts.map((node) => {
           return (
             <div id={node._id} key={node._id} className='activity'>
               <h3>{node.title}</h3>

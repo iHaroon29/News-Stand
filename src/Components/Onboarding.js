@@ -3,6 +3,8 @@ import { Button, Loading } from './Components'
 import AuthContext from './context'
 import { useNavigate } from 'react-router-dom'
 import { decodeJWT } from './utils/jwt'
+import { httpRequest } from './utils/httpRequest'
+
 const Onborading = ({ visible }) => {
   const [loading, setLoading] = useState(false)
   const [formState, setFormState] = useState(false)
@@ -67,34 +69,31 @@ const Content = (props) => {
 
 const Form = (props) => {
   const { setLoading } = props
-  const navigate = useNavigate()
-  const url = `http://localhost:8000/api/v1/auth/${
-    props.login ? 'login' : 'signup'
-  }`
   const [input, setInput] = useState({ email: '', password: '', username: '' })
-  const headers = new Headers()
-  headers.append('Content-type', 'application/json')
-  const options = {
-    headers,
-    body: JSON.stringify(input),
-    method: 'POST',
-  }
-  const formHandler = (e, authState, setAuthState) => {
+  const navigate = useNavigate()
+  const url = `/auth/${props.login ? 'login' : 'signup'}`
+  const formHandler = async (e, setAuthState) => {
     setLoading((prev) => !prev)
     e.preventDefault()
-    fetch(url, options)
-      .then((resp) => resp.json())
-      .then((data) => {
-        setAuthState({
-          ...authState,
-          auth: data.authorization,
-          token: data.accessToken,
-          userId: decodeJWT(data.accessToken).data,
-        })
-        setLoading((prev) => !prev)
-        navigate('/feed')
-      })
-      .catch((e) => console.log(e.message))
+    const response = await httpRequest({
+      url,
+      method: 'POST',
+      data: input,
+    })
+    if (response instanceof Error) {
+      setLoading((prev) => !prev)
+      return console.log(response)
+    }
+    setAuthState((prev) => {
+      return {
+        ...prev,
+        auth: response.data.authorization,
+        token: response.data.accessToken,
+        userId: decodeJWT(response.data.accessToken).data,
+      }
+    })
+    setLoading((prev) => !prev)
+    navigate('/feed')
   }
   const inputHandler = (e) => {
     setInput({ ...input, [e.target.id]: e.target.value })
@@ -104,10 +103,7 @@ const Form = (props) => {
       {({ authState, setAuthState }) => {
         return (
           <div className='form-wrapper'>
-            <form
-              action='#'
-              onSubmit={(e) => formHandler(e, authState, setAuthState)}
-            >
+            <form action='#' onSubmit={(e) => formHandler(e, setAuthState)}>
               <h2>{props.login ? 'LOG IN' : 'SIGN UP'}</h2>
 
               <input

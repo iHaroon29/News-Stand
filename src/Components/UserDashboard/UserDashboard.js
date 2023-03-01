@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import styled from 'styled-components'
+import AuthContext from '../context'
+import { httpRequest } from '../utils/httpRequest'
 import { UserCard } from './Components/UserCard'
 import placeholderImage from '../../Assets/placeholderprofile.jpg'
-import { OverlayWrapper } from '../Components'
+import { Loading, OverlayWrapper } from '../Components'
 import UserActivity from './Components/UserActivity'
 const DashboardWrapper = styled.div`
   width: 100%;
@@ -16,13 +18,37 @@ const DashboardWrapper = styled.div`
     "header header header header header"
     ". . sidebar sidebar sidebar"
     ". . sidebar sidebar sidebar"
-    "btn btn sidebar sidebar sidebar"
+    ". . sidebar sidebar sidebar"
 }
 `
 
 const UserDashboard = () => {
+  const [posts, setPosts] = useState([])
+  const [loading, setLoading] = useState(false)
+  const { authState } = useContext(AuthContext)
+  useEffect(() => {
+    setLoading((prev) => !prev)
+    ;(async () => {
+      const response = await httpRequest({
+        url: `/users/${authState.userId}/posts`,
+        method: 'get',
+        headers: { Authorization: 'Bearer ' + authState.token },
+      })
+      if (response instanceof Error) {
+        return console.log(response)
+      }
+      setPosts(response.data.posts)
+      setLoading((prev) => !prev)
+    })()
+  }, [authState.userId, authState.token])
+
   return (
     <DashboardWrapper>
+      {loading ? (
+        <OverlayWrapper width='100%' height='100%' saturation='0.2'>
+          <Loading />
+        </OverlayWrapper>
+      ) : null}
       <div
         className='profile-landing-background'
         style={{
@@ -39,7 +65,7 @@ const UserDashboard = () => {
         <OverlayWrapper width='100%' height='100%' saturation='0.15' />
       </div>
       <UserCard />
-      <UserActivity />
+      <UserActivity posts={posts} />
     </DashboardWrapper>
   )
 }
