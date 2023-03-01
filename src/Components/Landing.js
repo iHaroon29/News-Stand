@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Notif } from './Notif'
+import { OverlayWrapper } from './Components'
 import Hamber from './Hamber'
-import Onborading from './Onborading'
+import Onborading from './Onboarding'
 import FooterToggle from './FooterToggle'
 import About from './about'
 
@@ -17,7 +18,7 @@ const Landing = () => {
     setVisible((prev) => !prev)
     setAnimate((prev) => !prev)
   }
-  const updateAboutState = () =>{
+  const updateAboutState = () => {
     setAboutOverlay((prev) => !prev)
     setAboutVisible((prev) => !prev)
     setIsActive((prev) => !prev)
@@ -31,18 +32,23 @@ const Landing = () => {
       >
         <Hamber animate={animate} />
       </div>
-      {overlay ? <div className='overlay'></div> : null}
+
+      {overlay ? (
+        <OverlayWrapper
+          width='100%'
+          height='100%'
+          saturation='0.15'
+          zIndex='0'
+        />
+      ) : null}
       <div className='landing-image-holder'></div>
       <Onborading visible={visible} />
       <Notif />
-      <div
-        className={!animate}
-        onClick={updateAboutState}
-      >
+      <div className={!animate} onClick={updateAboutState}>
         <FooterToggle isActive={isActive} />
       </div>
       {aboutOverlay ? <div className='about-overlay'></div> : null}
-      <About visible={aboutVisible}/>
+      <About visible={aboutVisible} />
     </div>
   )
 }

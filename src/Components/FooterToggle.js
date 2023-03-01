@@ -1,5 +1,5 @@
 import React from 'react'
-import { FaCross, FaQuestion } from 'react-icons/fa'
+import { FaQuestion } from 'react-icons/fa'
 import { GrClose } from 'react-icons/gr'
 import styled from 'styled-components'
 
@@ -10,17 +10,15 @@ const ToggleWrapper = styled.div`
   position: absolute;
   bottom: 100px;
   left: 100px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
 
 const FooterToggle = (props) => {
-  const {isActive} = props
+  const { isActive } = props
   return (
-    <ToggleWrapper>
-      {props.isActive ? <GrClose /> : <FaQuestion />}
-    </ToggleWrapper>
+    <ToggleWrapper>{isActive ? <GrClose /> : <FaQuestion />}</ToggleWrapper>
   )
 }
 
