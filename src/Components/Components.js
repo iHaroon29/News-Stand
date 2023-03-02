@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 export const Button = styled.button`
@@ -84,5 +85,88 @@ export const Loading = () => {
       <span className='square-span loading-span'></span>
       <span className='triangle-span loading-span'></span>
     </LoadingWrapper>
+  )
+}
+
+const TypeWriterWrapper = styled.div`
+  width: ${(props) => props.width};
+  min-height: ${(props) => props.height};
+  color: ${(props) => props.color};
+
+  p {
+    font-size: ${(props) => props.size};
+    font-family: 'Playfair', serif;
+    font-style: ${(props) => (props.italics ? 'italic' : '')};
+    text-decoration: ${(props) => (props.underline ? 'underline' : 'none')};
+  }
+`
+
+export const TypeWriter = (props) => {
+  const {
+    text,
+    width,
+    height,
+    color,
+    size,
+    family,
+    loop,
+    duration,
+    italics,
+    underline,
+    background,
+  } = props
+  const [blink, setBlink] = useState(true)
+  const [reverse, setReverse] = useState(false)
+  const [index, setIndex] = useState(0)
+  const [subIndex, setSubIndex] = useState(0)
+
+  useEffect(() => {
+    if (subIndex === text[index].length + 1 && !reverse) {
+      setReverse(true)
+      return
+    }
+    if (reverse && subIndex === 0 && index !== text.length - 1) {
+      setReverse(false)
+      setIndex((prev) => prev + 1)
+      return
+    }
+    if (!loop) {
+      if (index === text.length - 1 && subIndex === text[index].length) {
+        return
+      }
+    } else {
+      if (index === text.length - 1 && reverse && subIndex === 0) {
+        setIndex(0)
+        setReverse(false)
+      }
+    }
+    const test = setTimeout(() => {
+      setSubIndex((prev) => prev + (reverse ? -1 : 1))
+    }, Math.max(reverse ? duration : subIndex === text[index].length ? 500 : 10, parseInt(Math.random() * 70)))
+    return () => clearInterval(test)
+  }, [subIndex, text, reverse, index, loop, duration])
+
+  useEffect(() => {
+    const timeout2 = setTimeout(() => {
+      setBlink((prev) => !prev)
+    }, 500)
+    return () => clearTimeout(timeout2)
+  }, [blink])
+  return (
+    <TypeWriterWrapper
+      width={width}
+      height={height}
+      color={color}
+      family={family}
+      size={size}
+      italics={italics}
+      underline={underline}
+      background={background}
+    >
+      <p>
+        {text[index].substring(0, subIndex)}
+        {blink ? '|' : ''}
+      </p>
+    </TypeWriterWrapper>
   )
 }
