@@ -289,3 +289,72 @@
 .show {
   background-color: #282828;
 }
+
+.main-wrapper{
+  height: 100vh;
+}
+/* Style the landing page and about info containers */
+.parent-container{
+  width: 200%;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #81B29A;
+  height: 100vh;
+}
+.landing-page,
+.about-info {
+  margin: 5%;
+  padding: 2%;
+  width: 50%; /* each container takes up 50% of the parent container's width */
+  transition: transform 0.5s ease-in-out;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #FFF;
+  height: 80%;
+  border-radius: 10px;
+}
+.about-button{
+  display: inline-block;
+}
+
+/* Slide the landing page out to the left when showAbout is true */
+.slide-out {
+  transform: translateX(-125%);
+}
+
+/* Slide the about info in from the right when showAbout is true */
+.slide-in {
+  transform: translateX(-125%);
+}
+
+.landing-page-image{
+  background-image: url('./Assets/5030031.jpg');
+  flex: 1;
+  width: 100%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+.landing-page-text{
+  flex: 1;
+}
+.about-button{
+  position: absolute;
+  top: 2%;
+  left: 2%;
+  background-color: #fff; 
+  color: #81B29A; 
+  border: none; 
+  padding: 10px 20px; 
+  text-align: center; 
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer; 
+  border-radius: 8px; 
+  margin: 5px;
+}
