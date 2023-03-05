@@ -25,14 +25,14 @@ const DashboardWrapper = styled.div`
 const UserDashboard = () => {
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(false)
-  const { authState } = useContext(AuthContext)
+  const { auth } = useContext(AuthContext)
   useEffect(() => {
     setLoading((prev) => !prev)
     ;(async () => {
       const response = await httpRequest({
-        url: `/users/${authState.userId}/posts`,
+        url: `/users/${auth.userId}/posts`,
         method: 'get',
-        headers: { Authorization: 'Bearer ' + authState.token },
+        headers: { Authorization: 'Bearer ' + auth.token },
       })
       if (response instanceof Error) {
         return console.log(response)
@@ -40,7 +40,7 @@ const UserDashboard = () => {
       setPosts(response.data.posts)
       setLoading((prev) => !prev)
     })()
-  }, [authState.userId, authState.token])
+  }, [auth.userId, auth.token])
 
   return (
     <DashboardWrapper>

@@ -1,18 +1,20 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useContext } from 'react'
 import Feed from './Feed'
 import Publish from './Publish'
 import Tags from './Tags'
 import { useNavigate } from 'react-router-dom'
+import AuthContext from './context'
 const FeedWrapper = () => {
+  const { auth } = useContext(AuthContext)
   const [updates, setUpdates] = useState([])
   const wsConnection = useRef(null)
   const navigate = useNavigate()
   const test = () => {
-    navigate('/profile')
+    navigate(`/profile/${auth.userId}`)
   }
   useEffect(() => {
     const socket = new WebSocket(
-      'ws://localhost:8000/ws/feed?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjoiNjNmZDhkMTBhYjI0Y2Y3Yzc3ODAyZDY4IiwiaWF0IjoxNjc3NTgwNTM2LCJleHAiOjE2Nzc2ODg1MzZ9.NmRv6Kev6iZNOrvu_hJjHZPgKRxiFMsND6tsTe1_maI'
+      `ws://localhost:8000/ws/feed?token=${auth.token}`
     )
     socket.onopen = () => {
       console.log('socket is open')

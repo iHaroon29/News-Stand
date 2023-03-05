@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Button, Loading } from './Components'
 import AuthContext from './context'
 import { useNavigate } from 'react-router-dom'
 import { decodeJWT } from './utils/jwt'
 import { httpRequest } from './utils/httpRequest'
-
+import { toast } from 'react-toastify'
 const Onborading = ({ visible }) => {
   const [loading, setLoading] = useState(false)
   const [formState, setFormState] = useState(false)
@@ -23,6 +23,7 @@ const Onborading = ({ visible }) => {
         }
       >
         <div className={formState ? 'move right' : 'move left'}></div>
+
         <div className='onboarding-left'>
           {!formState ? (
             <Form login={false} setLoading={setLoading} />
@@ -68,11 +69,12 @@ const Content = (props) => {
 }
 
 const Form = (props) => {
-  const { setLoading } = props
-  const [input, setInput] = useState({ email: '', password: '', username: '' })
+  const { setLoading, login } = props
   const navigate = useNavigate()
+  const { auth, setAuth } = useContext(AuthContext)
+  const [input, setInput] = useState({ email: '', password: '', username: '' })
   const url = `/auth/${props.login ? 'login' : 'signup'}`
-  const formHandler = async (e, setAuthState) => {
+  const formHandler = async (e, authState, setAuth) => {
     setLoading((prev) => !prev)
     e.preventDefault()
     const response = await httpRequest({
@@ -82,9 +84,11 @@ const Form = (props) => {
     })
     if (response instanceof Error) {
       setLoading((prev) => !prev)
-      return console.log(response)
+      return toast.error(response.message, {
+        position: toast.POSITION.TOP_LEFT,
+      })
     }
-    setAuthState((prev) => {
+    setAuth((prev) => {
       return {
         ...prev,
         auth: response.data.authorization,
@@ -92,54 +96,47 @@ const Form = (props) => {
         userId: decodeJWT(response.data.accessToken).data,
       }
     })
-    setLoading((prev) => !prev)
-    navigate('/feed')
+    navigate(`/feed`)
   }
   const inputHandler = (e) => {
     setInput({ ...input, [e.target.id]: e.target.value })
   }
   return (
-    <AuthContext.Consumer>
-      {({ authState, setAuthState }) => {
-        return (
-          <div className='form-wrapper'>
-            <form action='#' onSubmit={(e) => formHandler(e, setAuthState)}>
-              <h2>{props.login ? 'LOG IN' : 'SIGN UP'}</h2>
+    <div className='form-wrapper'>
+      <form action='#' onSubmit={(e) => formHandler(e, auth, setAuth)}>
+        <h2>{props.login ? 'LOG IN' : 'SIGN UP'}</h2>
 
-              <input
-                type='text'
-                placeholder='Username'
-                className='form-input'
-                value={input.username}
-                onChange={inputHandler}
-                id='username'
-              />
-              {!props.login && (
-                <input
-                  type='email'
-                  placeholder='Email'
-                  className='form-input'
-                  value={input.email}
-                  onChange={inputHandler}
-                  id='email'
-                />
-              )}
-              <input
-                type='password'
-                placeholder='Password'
-                className='form-input'
-                value={input.password}
-                onChange={inputHandler}
-                id='password'
-              />
-              <Button type='submit' primary={true}>
-                {props.login ? 'LOG IN' : 'SIGN UP'}
-              </Button>
-            </form>
-          </div>
-        )
-      }}
-    </AuthContext.Consumer>
+        <input
+          type='text'
+          placeholder='Username'
+          className='form-input'
+          value={input.username}
+          onChange={inputHandler}
+          id='username'
+        />
+        {!props.login && (
+          <input
+            type='email'
+            placeholder='Email'
+            className='form-input'
+            value={input.email}
+            onChange={inputHandler}
+            id='email'
+          />
+        )}
+        <input
+          type='password'
+          placeholder='Password'
+          className='form-input'
+          value={input.password}
+          onChange={inputHandler}
+          id='password'
+        />
+        <Button type='submit' primary={true}>
+          {props.login ? 'LOG IN' : 'SIGN UP'}
+        </Button>
+      </form>
+    </div>
   )
 }
 

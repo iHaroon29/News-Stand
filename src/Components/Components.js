@@ -30,7 +30,7 @@ const LoadingWrapper = styled.div`
   z-index: 4;
   top: 50%;
   left: 50%;
-  transform: translate(-50%);
+  transform: translate(-50%, -50%);
   display: flex;
   justify-content: center;
   background-color: white;
