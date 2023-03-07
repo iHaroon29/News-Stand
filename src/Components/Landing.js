@@ -1,13 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import styled from 'styled-components'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import ReactCSSTransitionGroup from 'react-transition-group'
 import { Notif } from './Notif'
 import { OverlayWrapper, TypeWriter, Button } from './Components'
 import Hamber from './Hamber'
 import Onborading from './Onboarding'
 import landingImg from '../Assets/5030031.jpg'
+import { FadeIn } from './utils/animation'
 
 const LandingWrapper = styled.div`
   width: 100%;
@@ -15,6 +15,7 @@ const LandingWrapper = styled.div`
   display: flex;
   background: #5da83a;
   justify-content: center;
+  overflow: hidden;
   .landing-holder {
     display: flex;
     width: 80%;
@@ -45,6 +46,7 @@ const Landing = () => {
   const [overlay, setOverlay] = useState(false)
   const [animate, setAnimate] = useState(false)
   const [translate, setTranslate] = useState(false)
+  const nodeRef = useRef(null)
   const updateAboutState = () => {
     setTranslate((prev) => !prev)
     setAnimate((prev) => !prev)
@@ -70,15 +72,13 @@ const Landing = () => {
           zIndex='0'
         />
       ) : null}
-      {!translate ? (
-        <div
-          className='landing-holder'
-          style={{
-            translate: !translate ? '50%' : '-50%',
-            transition: '0.5s ease all',
-            width: !translate ? '80%' : '20%',
-          }}
-        >
+      <FadeIn
+        state={!translate}
+        timeout={500}
+        className='case'
+        nodeRef={nodeRef}
+      >
+        <div className='landing-holder' ref={nodeRef}>
           <div className='landing-image-holder'></div>
           <div className='landing-content-holder'>
             <TypeWriter
@@ -97,24 +97,7 @@ const Landing = () => {
             </Button>
           </div>
         </div>
-      ) : (
-        /* <Onborading visible={visible} /> */
-        /* <Notif /> */
-        <div
-          className='test'
-          style={{
-            translate: !translate ? '100%' : '-50%',
-            transition: '0.5s ease all',
-            width: !translate ? '0' : '80%',
-            height: '85%',
-            background: 'white',
-            alignSelf: 'center',
-            opacity: !translate ? '0' : '1',
-          }}
-        >
-          <h2>Hey</h2>
-        </div>
-      )}
+      </FadeIn>
       <ToastContainer />
     </LandingWrapper>
   )

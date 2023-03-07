@@ -5,6 +5,7 @@ import { httpRequest } from '../utils/httpRequest'
 import { UserCard } from './Components/UserCard'
 import placeholderImage from '../../Assets/placeholderprofile.jpg'
 import { Loading, OverlayWrapper } from '../Components'
+import { Blog } from '../Dashboard/Components/Blog'
 import UserActivity from './Components/UserActivity'
 const DashboardWrapper = styled.div`
   width: 100%;
