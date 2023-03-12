@@ -14,14 +14,7 @@
 
 /* Inline #1 | http://localhost:3000/ */
 
-.feed {
-  background: white;
-  padding: 5px;
-  border-radius: 5px;
-  margin-bottom: 10px;
-}
-
-.feed-description-holder>p {
+.feed-description-holder > p {
   font-style: italic;
 }
 
@@ -32,7 +25,7 @@
   border: 1px solid black;
 }
 
-.feed-right>form:nth-child(1) {
+.feed-right > form:nth-child(1) {
   display: flex;
   flex-direction: column;
 }
@@ -191,13 +184,13 @@
   z-index: 1;
 }
 
-.form-wrapper>form {
+.form-wrapper > form {
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
-.form-wrapper>form>h2 {
+.form-wrapper > form > h2 {
   text-align: center;
   color: #282828;
   text-decoration: underline;
@@ -251,7 +244,6 @@
   opacity: 1;
   transform: translate(0%);
   transition: opacity 0.5s ease;
-
 }
 
 .case-exit-active {

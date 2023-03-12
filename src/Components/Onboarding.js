@@ -3,8 +3,9 @@ import { Button, Loading } from './Components'
 import AuthContext from './context'
 import { useNavigate } from 'react-router-dom'
 import { decodeJWT } from './utils/jwt'
-import { httpRequest } from './utils/httpRequest'
+import { axiosInstance } from './utils/httpRequest'
 import { toast } from 'react-toastify'
+import axios from 'axios'
 const Onborading = ({ visible }) => {
   const [loading, setLoading] = useState(false)
   const [formState, setFormState] = useState(false)
@@ -75,28 +76,32 @@ const Form = (props) => {
   const [input, setInput] = useState({ email: '', password: '', username: '' })
   const url = `/auth/${props.login ? 'login' : 'signup'}`
   const formHandler = async (e, authState, setAuth) => {
-    setLoading((prev) => !prev)
-    e.preventDefault()
-    const response = await httpRequest({
-      url,
-      method: 'POST',
-      data: input,
-    })
-    if (response instanceof Error) {
+    try {
       setLoading((prev) => !prev)
-      return toast.error(response.message, {
+      e.preventDefault()
+      const response = await axios({
+        baseURL: 'http://localhost:8000/api/v1/',
+        url,
+        method: 'POST',
+        data: input,
+      })
+
+      setAuth((prev) => {
+        return {
+          ...prev,
+          auth: response.data.authorization,
+          token: response.data.accessToken,
+          userId: decodeJWT(response.data.accessToken).data,
+        }
+      })
+      setLoading((prev) => !prev)
+      navigate(`/feed`)
+    } catch (e) {
+      setLoading((prev) => !prev)
+      return toast.error(e.response.data.message, {
         position: toast.POSITION.TOP_LEFT,
       })
     }
-    setAuth((prev) => {
-      return {
-        ...prev,
-        auth: response.data.authorization,
-        token: response.data.accessToken,
-        userId: decodeJWT(response.data.accessToken).data,
-      }
-    })
-    navigate(`/feed`)
   }
   const inputHandler = (e) => {
     setInput({ ...input, [e.target.id]: e.target.value })
@@ -104,7 +109,7 @@ const Form = (props) => {
   return (
     <div className='form-wrapper'>
       <form action='#' onSubmit={(e) => formHandler(e, auth, setAuth)}>
-        <h2>{props.login ? 'LOG IN' : 'SIGN UP'}</h2>
+        <h2>{login ? 'LOG IN' : 'SIGN UP'}</h2>
 
         <input
           type='text'
@@ -114,7 +119,7 @@ const Form = (props) => {
           onChange={inputHandler}
           id='username'
         />
-        {!props.login && (
+        {!login && (
           <input
             type='email'
             placeholder='Email'

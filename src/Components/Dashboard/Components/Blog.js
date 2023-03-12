@@ -1,8 +1,13 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useContext } from 'react'
 import EditorJS from '@editorjs/editorjs'
 import Header from '@editorjs/header'
-import { SimpleImage, TextWithInline } from '../../utils/editorjs_plugin'
+import { toast } from 'react-toastify'
+import AuthContext from '../../context'
+import { Button } from '../../Components'
+import { axiosInstance } from '../../utils/httpRequest'
+import { Text, SimpleImage } from '../../utils/editorjs_plugin'
 import '../../utils/editor.css'
+
 const DEFAULT_INITIAL_DATA = {
   time: new Date().getTime(),
   blocks: [
@@ -14,7 +19,7 @@ const DEFAULT_INITIAL_DATA = {
       },
     },
     {
-      type: 'paragraph',
+      type: 'text',
       data: {
         text: 'begin shit',
       },
@@ -24,33 +29,78 @@ const DEFAULT_INITIAL_DATA = {
 
 const EditorComponent = (props) => {
   const ejInstance = useRef()
-
+  const { auth } = useContext(AuthContext)
   const initEditor = () => {
-    const editor = new EditorJS({
-      holder: 'editorjs',
-      onReady: () => {
-        ejInstance.current = editor
-      },
-      autofocus: true,
-      data: DEFAULT_INITIAL_DATA,
-      onChange: async () => {
-        const data = await editor.saver.save()
-        console.log(data)
-      },
-      tools: {
-        header: Header,
-        image: SimpleImage,
-        ti: TextWithInline,
-      },
-    })
+    try {
+      const editor = new EditorJS({
+        holder: 'editorjs',
+        onReady: () => {
+          ejInstance.current = editor
+        },
+        autofocus: true,
+        data: DEFAULT_INITIAL_DATA || {},
+        onChange: async () => {
+          console.log(await editor.saver.save())
+        },
+        tools: {
+          header: {
+            class: Header,
+            inlineToolbar: true,
+          },
+          image: {
+            class: SimpleImage,
+            inlineToolbar: true,
+            config: {
+              token: auth.token,
+              userId: auth.userId,
+            },
+          },
+          text: {
+            class: Text,
+            inlineToolbar: true,
+          },
+        },
+      })
+    } catch (e) {
+      console.log(e.message)
+    }
   }
 
-  // This will run only once
+  const publishData = async () => {
+    try {
+      const data = await ejInstance.current.saver.save()
+
+      const resp = await axiosInstance({
+        url: `http://localhost:8000/api/v1/users/${auth.userId}/posts`,
+        method: 'POST',
+
+        data: {
+          title: 'Haroon',
+          tags: [1, 2, 3, 4],
+          jsonData: JSON.stringify(data),
+        },
+        headers: {
+          authorization: `Bearer ${auth.token}`,
+          ...data.getHeaders(),
+        },
+      })
+      if (resp instanceof Error) {
+        throw new Error(resp.message)
+      }
+      console.log(resp)
+    } catch (e) {
+      toast.error(e.message, {
+        position: toast.POSITION.TOP_LEFT,
+      })
+    }
+  }
+  const draftData = async () => {
+    await ejInstance.current.saver.save()
+  }
   useEffect(() => {
     if (ejInstance.current === null) {
       initEditor()
     }
-
     return () => {
       ejInstance?.current?.destroy()
       ejInstance.current = null
@@ -59,7 +109,15 @@ const EditorComponent = (props) => {
 
   return (
     <>
-      <div id='editorjs' style={{ ...props.style }}></div>
+      <div id='editorjs'></div>
+      <div className='button-holder'>
+        <Button className='save-btn' onClick={publishData} primary={true}>
+          Publish
+        </Button>
+        <Button className='draft-btn' onClick={draftData} primary={true}>
+          Draft
+        </Button>
+      </div>
     </>
   )
 }

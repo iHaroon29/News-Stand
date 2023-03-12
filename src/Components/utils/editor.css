@@ -1,17 +1,40 @@
 .simple-image {
- padding: 20px 0;
+  padding: 20px 0;
 }
 
 .simple-image input {
- width: 100%;
- padding: 10px;
- border: 1px solid #e4e4e4;
- border-radius: 3px;
- outline: none;
- font-size: 14px;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #e4e4e4;
+  border-radius: 3px;
+  outline: none;
+  font-size: 14px;
 }
 
 .simple-image img {
- max-width: 100%;
- margin-bottom: 15px;
+  max-width: 100%;
+  margin-bottom: 15px;
+}
+
+.custom-text {
+  overflow-wrap: break-word;
+  width: 100%;
+  padding: 10px;
+  border-bottom: 1px solid #e4e4e4;
+  border-radius: 3px;
+  outline: none;
+}
+
+.justify {
+  text-align: justify;
+}
+
+.center {
+  text-align: center;
+}
+.leftAlign {
+  text-align: left;
+}
+.rightAlign {
+  text-align: right;
 }

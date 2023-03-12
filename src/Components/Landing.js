@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import styled from 'styled-components'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -98,6 +98,7 @@ const Landing = () => {
           </div>
         </div>
       </FadeIn>
+      <Onborading visible={visible} />
       <ToastContainer />
     </LandingWrapper>
   )

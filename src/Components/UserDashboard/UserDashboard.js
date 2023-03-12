@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react'
 import styled from 'styled-components'
 import AuthContext from '../context'
-import { httpRequest } from '../utils/httpRequest'
+import { axiosInstance } from '../utils/httpRequest'
 import { UserCard } from './Components/UserCard'
 import placeholderImage from '../../Assets/placeholderprofile.jpg'
 import { Loading, OverlayWrapper } from '../Components'
@@ -30,7 +30,7 @@ const UserDashboard = () => {
   useEffect(() => {
     setLoading((prev) => !prev)
     ;(async () => {
-      const response = await httpRequest({
+      const response = await axiosInstance({
         url: `/users/${auth.userId}/posts`,
         method: 'get',
         headers: { Authorization: 'Bearer ' + auth.token },
